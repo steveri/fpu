@@ -1,22 +1,28 @@
 int SHOW_ALL_RESULTS = 0;
 int PRINT_FINAL_SUMMARY = 1;
 
-// #define TEST_SUB
-//#define TEST_ADD
-//#define TEST_MUL
-
-#if defined(test_SUB)
-  #define VTEST VSUB
-  #define VTEST_H "VSUB.h"
-  #define WHICH_TEST "SUB"
-  #define WHICH_OP "-"
-
-
-#elif defined(test_ADD)
+#if defined(test_ADD)
   #define VTEST VADD
   #define VTEST_H "VADD.h"
   #define WHICH_TEST "ADD"
-  #define WHICH_OP "+"
+  #define OP_STRING "+"
+  #define WHICH_OP +
+
+#elif defined(test_SUB)
+  #define VTEST VSUB
+  #define VTEST_H "VSUB.h"
+  #define WHICH_TEST "SUB"
+  #define OP_STRING "-"
+  #define WHICH_OP -
+
+#elif defined(test_MUL)
+  #define VTEST VMUL
+  #define VTEST_H "VMUL.h"
+  #define WHICH_TEST "MUL"
+  #define OP_STRING "*"
+  #define WHICH_OP *
+
+
 
 #endif
 
@@ -98,6 +104,7 @@ int main(int argc, char **argv, char **env) {
   int n_okay=0;
   int n_fail=0;
   int n_nan=0;
+  int n_denorm=0;
 
   // Error tracking
   double error;
@@ -114,7 +121,7 @@ int main(int argc, char **argv, char **env) {
       top->a = myrand32();
       top->b = myrand32();
 
-      // Four minus two
+      // Four minus/times two
       // top->a = 0x40000000; top->b = 0x3f800000;
 
       float afloat = bits2shortreal(top->a);
@@ -126,12 +133,20 @@ int main(int argc, char **argv, char **env) {
       // Process the results
       float zfloat = bits2shortreal(top->z);
       float abfloat;
+
+      abfloat = (float) ( (float)afloat WHICH_OP (float)bfloat );
+
+      /*
       if (!strcmp(WHICH_TEST, "ADD")) {
           abfloat = (float) ( (float)afloat + (float)bfloat );
       } else if (!strcmp(WHICH_TEST, "SUB")) {
           abfloat = (float) ( (float)afloat - (float)bfloat );
       }
+      */
+
       unsigned int abbits = shortreal2bits(abfloat);
+
+
 
       // Calculate ab=solute error as parts per million (ppm)
 
@@ -146,20 +161,22 @@ int main(int argc, char **argv, char **env) {
       printf("error3 = %f\n", error);
       */
 
-      // Keep track of max_error_found
-      if (error > max_error_found) {
-          max_error_found = error;
-
-          max_afloat = afloat; max_bfloat = bfloat; max_zfloat = zfloat;
-          max_abits  = top->a; max_bbits  = top->b; max_zbits  = top->z;
-
-          max_abfloat = abfloat; max_abbits = abbits;
-      }
-
 #define EXACT (abbits == top->z)
 #define OKAY  (error <= max_error_allowed)
 #define FAIL  (error >  max_error_allowed)
 #define MYNAN ((error != error) || (zfloat != zfloat))
+
+      // Keep track of max_error_found
+      if (OKAY) {
+          if (error > max_error_found) {
+              max_error_found = error;
+
+              max_afloat = afloat; max_bfloat = bfloat; max_zfloat = zfloat;
+              max_abits  = top->a; max_bbits  = top->b; max_zbits  = top->z;
+
+              max_abfloat = abfloat; max_abbits = abbits;
+          }
+      }
 
       //      int DBG=0;
       //      printf("FOO %d || (%f > %f) =? %d\n", DBG, error, max_error_found, (DBG || (error > max_error)));
@@ -168,19 +185,25 @@ int main(int argc, char **argv, char **env) {
 
       const char *RESULT = EXACT ? "EXACT" : (OKAY  ? "OKAY" : "FAIL");
           
+      int denorm=0;
+      if ((top->a & 0x7f800000) == 0) { denorm = 1; }
+      if ((top->b & 0x7f800000) == 0) { denorm = 1; }
+      if ((top->z & 0x7f800000) == 0) { denorm = 1; }
+
       // Don't care about nan for now; gots bigger fish to fry.
       // if (SHOW_ALL_RESULTS || FAIL || MYNAN) {
       if (SHOW_ALL_RESULTS || FAIL) {
 
-          printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err= %lf ppm %s%s\n", 
-                 afloat, WHICH_OP, bfloat, zfloat, abfloat,
+          printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err= %lf ppm %s%s%s\n", 
+                 afloat, OP_STRING, bfloat, zfloat, abfloat,
                  error,
                  MYNAN ? "NAN " : "",
+                 denorm ? "DENORM " : "",
                  RESULT
                  );
 
           printf(" %08x %s  %08x =  %08x =?  %08x :: %s\n",
-                 top->a, WHICH_OP, top->b, top->z, abbits,
+                 top->a, OP_STRING, top->b, top->z, abbits,
                  (abbits == top->z) ? "TRUE" : "FALSE");
           /*
           if      EXACT { printf("result EXACT\n"); }
@@ -194,10 +217,11 @@ int main(int argc, char **argv, char **env) {
       ntests++;
 
       // Can only be one of: exact, okay, or fail
-      if MYNAN     { n_nan++; }
-      else if EXACT{ n_exact++; }
-      else if OKAY { n_okay++; }
-      else         { n_fail++; }
+      if      EXACT    { n_exact++;  }
+      else if OKAY     { n_okay++;   }
+      else if MYNAN    { n_nan++;    }
+      else if (denorm) { n_denorm++; }
+      else             { n_fail++;   }
 
       // Note some nan's are okay, others are exact etc.
 
@@ -210,6 +234,7 @@ int main(int argc, char **argv, char **env) {
       printf("Exact matches:    %6d\n", n_exact);
       printf("Acceptable error: %6d\n", n_okay);
       printf("NaN:              %6d\n", n_nan);
+      printf("Denorm:           %6d\n", n_denorm);
       printf("Outright fails:   %6d\n", n_fail);
       printf("\n");
 
@@ -217,11 +242,11 @@ int main(int argc, char **argv, char **env) {
       if (max_error_found > 0.0) {
           printf("--------------------------------------------------------------\n");
           printf(" %08x %s %08x = %08x SHOULD BE %08x\n",
-                 max_abits, WHICH_OP, max_bbits, max_zbits, max_abbits);
+                 max_abits, OP_STRING, max_bbits, max_zbits, max_abbits);
       
           // printf("%f + %f = %f =? %f :: %s err=%lf ppm\n", 
           printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err=%lf ppm\n", 
-                 max_afloat, WHICH_OP, max_bfloat, max_zfloat, max_abfloat, max_error_found);
+                 max_afloat, OP_STRING, max_bfloat, max_zfloat, max_abfloat, max_error_found);
           /*
             0.297941 + 92.117119 = 92.415054 =? 92.415062
             3e988bc2 +  42b83bf7 =  42b8d482 =?  42b8d483 :: FALSE

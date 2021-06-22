@@ -3,6 +3,7 @@ TODO - misc
 * fix denorm / NaN so there are fewer failures in the tests
 * better, less-random test vectors, see below
 * parameterizable fields e.g. internal precision, mantissa and exponent size etc.
+* test should report: "a out of range" or "b" or "z" if less than 10^36 or whatever
 
 
 ------------------------------------------------------------------------

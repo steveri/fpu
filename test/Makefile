@@ -1,11 +1,13 @@
-TEST=test_ADD
+# Adder test:
+
+TEST=ADD
 
 clean:
 	/bin/rm -rf counter.vcd obj_dir
 
 build:
-	verilator -Wno-fatal -Wall --cc $(TEST).v --exe $(TEST).cpp -y .. --trace
-	make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
+	verilator -Wno-fatal -Wall --cc $(TEST).v --exe test.cpp -y .. --trace
+	CPPFLAGS=-D$(TEST) make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
 
 run:
 	obj_dir/V$(TEST)

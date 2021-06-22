@@ -3,7 +3,7 @@
 `define SUB 1'b1
 
 
-module test_ADD (
+module test_SUB (
    input logic [31:0]  a,
    input logic [31:0]  b,
    output logic [31:0] z

@@ -1,5 +1,29 @@
+int SHOW_ALL_RESULTS = 0;
+int PRINT_FINAL_SUMMARY = 1;
+
+// #define TEST_SUB
+//#define TEST_ADD
+//#define TEST_MUL
+
+#if defined(test_SUB)
+  #define VTEST Vtest_SUB
+  #define VTEST_H "Vtest_SUB.h"
+  #define WHICH_TEST "SUB"
+  #define WHICH_OP "-"
+
+
+#elif defined(test_ADD)
+  #define VTEST Vtest_ADD
+  #define VTEST_H "Vtest_ADD.h"
+  #define WHICH_TEST "ADD"
+  #define WHICH_OP "+"
+
+#endif
+
+
+
 #include <cmath>
-#include "Vtest_ADD.h"
+#include VTEST_H
 #include "verilated.h"
 #include "verilated_vcd_c.h"
 
@@ -44,10 +68,14 @@ int main(int argc, char **argv, char **env) {
   int ncy;
   Verilated::commandArgs(argc, argv);
 
+  printf("\n");
+  printf("%s TEST\n", WHICH_TEST);
+
   process_args(argc, argv);
 
   // init top verilog instance
-  Vtest_ADD* top = new Vtest_ADD;
+  // VTEST_SUB* top = new Vtest_SUB;
+  VTEST* top = new VTEST;
 
   // init trace dump
   Verilated::traceEverOn(true);
@@ -79,9 +107,6 @@ int main(int argc, char **argv, char **env) {
   float max_afloat, max_bfloat, max_zfloat, max_abfloat;
   unsigned int max_abits, max_bbits, max_zbits, max_abbits;
 
-  int SHOW_ALL_RESULTS = 0;
-  int PRINT_FINAL_SUMMARY = 1;
-
   printf("------------------------------------------------------------------------\n");
   int MAX_I = 2000;
   for (i=0; i<MAX_I; i++) {
@@ -89,15 +114,23 @@ int main(int argc, char **argv, char **env) {
       top->a = myrand32();
       top->b = myrand32();
 
+      // Four minus two
+      // top->a = 0x40000000; top->b = 0x3f800000;
+
       float afloat = bits2shortreal(top->a);
       float bfloat = bits2shortreal(top->b);
 
       // "Call" the simulator
       top->eval();
 
-      // Process the reults
+      // Process the results
       float zfloat = bits2shortreal(top->z);
-      float abfloat = (float) ( (float)afloat + (float)bfloat );
+      float abfloat;
+      if (!strcmp(WHICH_TEST, "ADD")) {
+          abfloat = (float) ( (float)afloat + (float)bfloat );
+      } else if (!strcmp(WHICH_TEST, "SUB")) {
+          abfloat = (float) ( (float)afloat - (float)bfloat );
+      }
       unsigned int abbits = shortreal2bits(abfloat);
 
       // Calculate ab=solute error as parts per million (ppm)
@@ -133,31 +166,21 @@ int main(int argc, char **argv, char **env) {
 
       if EXACT { error = 0.0; }
 
-      const char *RESULT = 
-          EXACT ? "EXACT" : 
-
-           (OKAY  ? "OKAY" : "FAIL");
-
-
-      //          (MYNAN ? "NAN" :
-      //           (OKAY  ? "OKAY" : "FAIL"));
-
-
-      SHOW_ALL_RESULTS=0;
+      const char *RESULT = EXACT ? "EXACT" : (OKAY  ? "OKAY" : "FAIL");
           
       // Don't care about nan for now; gots bigger fish to fry.
       // if (SHOW_ALL_RESULTS || FAIL || MYNAN) {
       if (SHOW_ALL_RESULTS || FAIL) {
 
-          printf("%13.6e + %13.6e = %13.6e =? %13.6e :: err= %lf ppm %s%s\n", 
-                 afloat, bfloat, zfloat, abfloat,
+          printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err= %lf ppm %s%s\n", 
+                 afloat, WHICH_OP, bfloat, zfloat, abfloat,
                  error,
                  MYNAN ? "NAN " : "",
                  RESULT
                  );
 
-          printf(" %08x +  %08x =  %08x =?  %08x :: %s\n",
-                 top->a, top->b, top->z, abbits,
+          printf(" %08x %s  %08x =  %08x =?  %08x :: %s\n",
+                 top->a, WHICH_OP, top->b, top->z, abbits,
                  (abbits == top->z) ? "TRUE" : "FALSE");
           /*
           if      EXACT { printf("result EXACT\n"); }

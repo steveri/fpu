@@ -1,10 +1,12 @@
 # Adder test (default):
 #   % make clean
-#   % make TEST=ADD build
-#   % make TEST=ADD run
+#   % make build TEST=ADD
+#   % make run   TEST=ADD
 #
-# For sub and mul, use TEST=ADD and TEST=MUL respectively
+# Or simply "make all TEST=ADD"
+# Similarly, can do "make all TEST=SUB" and "make all TEST=MUL"
 
+# Default is ADD, can override with command line as shown above.
 TEST=ADD
 
 clean:
@@ -16,6 +18,11 @@ build:
 
 run:
 	obj_dir/V$(TEST)
+
+all:
+	make clean
+	make build TEST=$(TEST)
+	make run TEST=$(TEST)
 
 
 ########################################################################

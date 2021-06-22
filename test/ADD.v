@@ -3,12 +3,12 @@
 `define SUB 1'b1
 
 
-module test_ADD (
+module ADD (
    input logic [31:0]  a,
    input logic [31:0]  b,
    output logic [31:0] z
 );
    // sradd ADD(.a(a), .b(b), .z(z));
-   addsub ADD(.op(`ADD), .a(a), .b(b), .z(z));
+   addsub ADDSUB(.op(`ADD), .a(a), .b(b), .z(z));
 
 endmodule

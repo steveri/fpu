@@ -1,4 +1,9 @@
-# Adder test:
+# Adder test (default):
+#   % make clean
+#   % make TEST=ADD build
+#   % make TEST=ADD run
+#
+# For sub and mul, use TEST=ADD and TEST=MUL respectively
 
 TEST=ADD
 
@@ -7,13 +12,14 @@ clean:
 
 build:
 	verilator -Wno-fatal -Wall --cc $(TEST).v --exe test.cpp -y .. --trace
-	CPPFLAGS=-D$(TEST) make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
+	CPPFLAGS=-Dtest_$(TEST) make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
 
 run:
 	obj_dir/V$(TEST)
 
 
-# FANCY/"CORRECT" way to do it:
+########################################################################
+# FANCY/"CORRECT" way to do it, with dependences and all...
 # 
 # run: obj_dir/V$(TEST)
 # 	obj_dir/V$(TEST)
@@ -28,4 +34,3 @@ run:
 # 	verilator -Wno-fatal -Wall --cc $(TEST).v --exe $(TEST).cpp -y .. --trace
 # 	make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
 # 	obj_dir/V$(TEST)
-# 

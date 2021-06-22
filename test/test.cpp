@@ -6,15 +6,15 @@ int PRINT_FINAL_SUMMARY = 1;
 //#define TEST_MUL
 
 #if defined(test_SUB)
-  #define VTEST Vtest_SUB
-  #define VTEST_H "Vtest_SUB.h"
+  #define VTEST VSUB
+  #define VTEST_H "VSUB.h"
   #define WHICH_TEST "SUB"
   #define WHICH_OP "-"
 
 
 #elif defined(test_ADD)
-  #define VTEST Vtest_ADD
-  #define VTEST_H "Vtest_ADD.h"
+  #define VTEST VADD
+  #define VTEST_H "VADD.h"
   #define WHICH_TEST "ADD"
   #define WHICH_OP "+"
 
@@ -216,12 +216,12 @@ int main(int argc, char **argv, char **env) {
       printf("Max error found:  %f ppm\n", max_error_found);
       if (max_error_found > 0.0) {
           printf("--------------------------------------------------------------\n");
-          printf(" %08x + %08x = %08x SHOULD BE %08x\n",
-                 max_abits, max_bbits, max_zbits, max_abbits);
+          printf(" %08x %s %08x = %08x SHOULD BE %08x\n",
+                 max_abits, WHICH_OP, max_bbits, max_zbits, max_abbits);
       
           // printf("%f + %f = %f =? %f :: %s err=%lf ppm\n", 
-          printf("%13.6e + %13.6e = %13.6e =? %13.6e :: err=%lf ppm\n", 
-                 max_afloat, max_bfloat, max_zfloat, max_abfloat, max_error_found);
+          printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err=%lf ppm\n", 
+                 max_afloat, WHICH_OP, max_bfloat, max_zfloat, max_abfloat, max_error_found);
           /*
             0.297941 + 92.117119 = 92.415054 =? 92.415062
             3e988bc2 +  42b83bf7 =  42b8d482 =?  42b8d483 :: FALSE

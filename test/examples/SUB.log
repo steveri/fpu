@@ -1,0 +1,39 @@
+/bin/rm -rf counter.vcd obj_dir
+verilator -Wno-fatal -Wall --cc SUB.v --exe test.cpp -y .. --trace
+%Warning-UNUSED: ../srsub.v:151:15: Bits of signal are not used: 'zm_final'[23]
+                                  : ... In instance SUB.ADDSUB.SUB
+  151 |   wire [23:0] zm_final; assign zm_final = zm << need_shift;
+      |               ^~~~~~~~
+                 ../addsub.v:36:1: ... note: In file included from addsub.v
+                 SUB.v:14:1: ... note: In file included from SUB.v
+                 ... Use "/* verilator lint_off UNUSED */" and lint_on around source to disable this message.
+CPPFLAGS=-Dtest_SUB make -j -C obj_dir/ -f VSUB.mk VSUB
+make[1]: Entering directory '/nobackup/steveri/github/fpu/test/obj_dir'
+g++  -Dtest_SUB -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o test.o ../test.cpp
+g++  -Dtest_SUB -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o verilated.o /usr/local/share/verilator/include/verilated.cpp
+g++  -Dtest_SUB -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o verilated_vcd_c.o /usr/local/share/verilator/include/verilated_vcd_c.cpp
+/usr/bin/perl /usr/local/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include VSUB.cpp VSUB__Trace.cpp > VSUB__ALLfast.cpp
+/usr/bin/perl /usr/local/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include VSUB__Syms.cpp VSUB__Trace__Slow.cpp > VSUB__ALLslow.cpp
+g++  -Dtest_SUB -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o VSUB__ALLfast.o VSUB__ALLfast.cpp
+g++  -Dtest_SUB -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o VSUB__ALLslow.o VSUB__ALLslow.cpp
+ar -cr VSUB__ALL.a VSUB__ALLfast.o VSUB__ALLslow.o
+ranlib VSUB__ALL.a
+g++    test.o verilated.o verilated_vcd_c.o VSUB__ALL.a    -o VSUB  
+make[1]: Leaving directory '/nobackup/steveri/github/fpu/test/obj_dir'
+obj_dir/VSUB
+
+SUB TEST
+------------------------------------------------------------------------
+Number of tests:    2000
+Exact matches:      1793
+Acceptable error:    195
+NaN:                  12
+Denorm:                0
+Outright fails:        0
+
+Max error found:  0.224871 ppm
+--------------------------------------------------------------
+ cefd4eab - 5a07b62c = da07b62c SHOULD BE da07b62e
+-2.124896e+09 -  9.549855e+15 = -9.549855e+15 =? -9.549858e+15 :: err=0.224871 ppm
+--------------------------------------------------------------
+

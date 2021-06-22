@@ -192,7 +192,7 @@ int main(int argc, char **argv, char **env) {
 
       // Don't care about nan for now; gots bigger fish to fry.
       // if (SHOW_ALL_RESULTS || FAIL || MYNAN) {
-      if (SHOW_ALL_RESULTS || FAIL) {
+      if ((SHOW_ALL_RESULTS || FAIL) && !denorm) {
 
           printf("%13.6e %s %13.6e = %13.6e =? %13.6e :: err= %lf ppm %s%s%s\n", 
                  afloat, OP_STRING, bfloat, zfloat, abfloat,

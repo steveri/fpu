@@ -9,4 +9,4 @@ if [ "$1" == "--help" ]; then
 fi
 make clean
 make build TEST=$1
-make run TEST=$1 | tee $1.log
+make run TEST=$1 | tee $1.results

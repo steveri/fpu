@@ -1,0 +1,48 @@
+/bin/rm -rf counter.vcd obj_dir
+verilator -Wno-fatal -Wall --cc MUL.v --exe test.cpp -y .. --trace
+%Warning-UNUSED: ../srmul.v:29:15: Bits of signal are not used: 'ab'[22:0]
+                                 : ... In instance MUL.MUL
+   29 |   wire [47:0] ab; assign ab = am * bm;
+      |               ^~
+                 MUL.v:9:1: ... note: In file included from MUL.v
+                 ... Use "/* verilator lint_off UNUSED */" and lint_on around source to disable this message.
+%Warning-UNUSED: ../srmul.v:36:15: Bits of signal are not used: 'zm_true'[23]
+                                 : ... In instance MUL.MUL
+   36 |   wire [23:0] zm_true;   assign zm_true = too_big ? ab[47:24] : ab[46:23];
+      |               ^~~~~~~
+                 MUL.v:9:1: ... note: In file included from MUL.v
+%Warning-UNUSED: ../srmul.v:57:8: Signal is not used: 'ufw'
+                                : ... In instance MUL.MUL
+   57 |   wire ufw; assign ufw = too_big ? ((ae_plus_be + 9'b1) < bias) : (ae_plus_be < bias);
+      |        ^~~
+                 MUL.v:9:1: ... note: In file included from MUL.v
+CPPFLAGS=-Dtest_MUL make -j -C obj_dir/ -f VMUL.mk VMUL
+make[1]: Entering directory '/nobackup/steveri/github/fpu/test/obj_dir'
+g++  -Dtest_MUL -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o test.o ../test.cpp
+g++  -Dtest_MUL -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o verilated.o /usr/local/share/verilator/include/verilated.cpp
+g++  -Dtest_MUL -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o verilated_vcd_c.o /usr/local/share/verilator/include/verilated_vcd_c.cpp
+/usr/bin/perl /usr/local/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include VMUL.cpp VMUL__Trace.cpp > VMUL__ALLfast.cpp
+/usr/bin/perl /usr/local/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include VMUL__Syms.cpp VMUL__Trace__Slow.cpp > VMUL__ALLslow.cpp
+g++  -Dtest_MUL -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o VMUL__ALLfast.o VMUL__ALLfast.cpp
+g++  -Dtest_MUL -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow       -c -o VMUL__ALLslow.o VMUL__ALLslow.cpp
+ar -cr VMUL__ALL.a VMUL__ALLfast.o VMUL__ALLslow.o
+ranlib VMUL__ALL.a
+g++    test.o verilated.o verilated_vcd_c.o VMUL__ALL.a    -o VMUL  
+make[1]: Leaving directory '/nobackup/steveri/github/fpu/test/obj_dir'
+obj_dir/VMUL
+
+MUL TEST
+------------------------------------------------------------------------
+Number of tests:    2000
+Exact matches:       716
+Acceptable error:    761
+NaN:                 508
+Denorm:               15
+Outright fails:        0
+
+Max error found:  0.119015 ppm
+--------------------------------------------------------------
+ 212de4c1 * 6dbcbe82 = 4f803565 SHOULD BE 4f803566
+ 5.891743e-19 *  7.301686e+27 =  4.301966e+09 =?  4.301966e+09 :: err=0.119015 ppm
+--------------------------------------------------------------
+

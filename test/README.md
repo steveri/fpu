@@ -72,3 +72,5 @@ Max error found:  0.200323 ppm
 -4.827894e+31 + -9.107865e+24 = -4.827894e+31 =? -4.827895e+31 :: err=0.200323 ppm
 --------------------------------------------------------------
 ```
+
+Also see example results in `examples/` subdirectory.

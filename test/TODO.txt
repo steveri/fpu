@@ -1,0 +1,472 @@
+TODO - misc
+* multiplier tests!
+* fix denorm / NaN so there are fewer failures in the tests
+* better, less-random test vectors, see below
+* parameterizable fields e.g. internal precision, mantissa and exponent size etc.
+
+
+------------------------------------------------------------------------
+TODO - better, less-random test vectors
+
+Most of the "random" operands are nowhere near being within range of one another e.g.
+
+ 1.340054e-32 - -8.434095e-19 =  8.434095e-19 =?  8.434095e-19 :: err= 0.000000 ppm EXACT
+ 0a8b28bc -  a178ee38 =  2178ee38 =?  2178ee38 :: TRUE
+
+The test numbers should be biased towards numbers that are similar enough in range such that the FPU gets a reasonable workout...
+
+Ideas:
+* separate random numbers for mantissa (truly random) vs. exponent (like a bell curve distribution with same-exponent in the middle like).
+
+
+
+========================================================================
+NOTES: ADDER FAILURES -- mostly nans and denorms i think
+
+FAILS!!!
+ 6.03e-37 + -1.09e-38 =  5.91e-37 =?  5.92e-37
+ 6.027615e-37 + -1.088354e-38 =  5.914422e-37 =?  5.918779e-37 :: FALSE err=736.174377 ppm
+ 034d1bee +  807682e4 =  034941e2 =?  034967d7 :: FALSE
+result FAIL
+
+ 9.11e-39 +  2.12e-37 =  2.22e-37 =?  2.21e-37
+ 9.106665e-39 +  2.118189e-37 =  2.222497e-37 =?  2.209256e-37 :: FALSE err=5993.538574 ppm
+ 006329ad +  02902810 =  0297415d =?  02965aab :: FALSE
+
+            0.297941 + 92.117119 = 92.415054 =? 92.415062
+            3e988bc2 +  42b83bf7 =  42b8d482 =?  42b8d483 :: FALSE
+
+-3.512601e-37 +  6.741114e-39 = -3.420120e-37 =? -3.445190e-37 :: err= 7276.556641 ppm FAIL
+ 82ef0e23 +  0049677c =  82e8c2e7 =?  82ea77ab :: FALSE
+
+
+ 1.421990e-37 +  1.017895e-38 =  1.531660e-37 =?  1.523780e-37 :: err= 5171.280762 ppm FAIL
+ 02418d21 +  006ed6c4 =  02507a8d =?  024f67fa :: FALSE
+
+
+ 1.152907e-38 + -1.131070e-38 =  1.264276e+37 =?  2.183699e-40 :: err= inf ppm FAIL
+ 007d8a58 +  807b299e =  7d182e80 =?  000260ba :: FALSE
+
+-3.585655e-39 + -2.347925e-36 = -2.355596e-36 =? -2.351511e-36 :: err= 1736.979736 ppm FAIL
+ 80270b59 +  8447bd4a =  84486455 =?  84480b61 :: FALSE
+
+ 3.301982e-35 +  1.016466e-38 =  3.303078e-35 =?  3.302999e-35 :: err= 23.980667 ppm FAIL
+ 062f9041 +  006eaef0 =  062f9f2b =?  062f9e17 :: FALSE
+
+ 8.813156e-39 +  1.233176e-36 =  1.243460e-36 =?  1.241989e-36 :: err= 1184.231934 ppm FAIL
+ 005ff77e +  03d1d060 =  03d3904e =?  03d3503e :: FALSE
+
+-9.282572e-39 + -2.200802e-38 = -3.252678e-38 =? -3.129060e-38 :: err= 39506.546875 ppm FAIL
+ 80651409 +  80efa56a =  813117b7 =?  812a5cba :: FALSE
+
+
+
+========================================================================
+NOTES
+
+mul is tricky; apparently it reports an incorrect result or two before settling on the final result
+
+1x1=1?
+srmul a= 1.000000 (3f800000) b= 1.000000 (3f800000) z= 0.000000 (00000000)
+srmul a= 1.000000 (3f800000) b= 1.000000 (3f800000) z= 0.000000 (00000000)
+srmul a= 1.000000 (3f800000) b= 1.000000 (3f800000) z= 1.000000 (3f800000)
+
+-1x1=-1?
+srmul a=-1.000000 (bf800000) b= 1.000000 (3f800000) z= 0.000000 (xxxxxxxx)
+srmul a= 0.000000 (248d3132) b= 1.000000 (3f800000) z= 0.000000 (xxxxxxxx)
+srmul a=-1.000000 (bf800000) b= 1.000000 (3f800000) z= 0.000000 (xxxxxxxx)
+srmul a= 0.000000 (248d3132) b= 1.000000 (3f800000) z= 0.000000 (xxxxxxxx)
+srmul a=-1.000000 (bf800000) b= 1.000000 (3f800000) z=-1.000000 (bf800000)
+
+------------------------------------------------------------------------
+
+
+(venv) [kiwi /nobackup/steveri/github/fpu ] log=/nobackup/steveri/github/fftgen/bin/simv_analysis/examples/simv.log
+
+# Print final srmulop in each srmul group:
+cat $log | awk '
+/^srmul.*a=/ {line=$0}
+/^srmul/ { next }
+{ if (line) { print line; line=0 }}
+' | head
+
+for f in `find $d -name \*log`; do
+cat $f | awk '
+/^srmul.*a=/ {line=$0}
+/^srmul/ { next }
+{ if (line) { print line; line=0 }}
+'; done > tmp.mul &
+
+
+# Thats-a no good. how about this: only print lines that are true :o !!
+
+egrep -rh '^srmul.*a=' $d | grep -v xxx | grep -v Binary | sed 's/=/ /g' | awk '
+  { a=$3; b=$6; z=$9 }
+  { ab=sprintf("%.6f", a*b); print ab }
+  { if (ab==z) { print $0 " true" } else { print $0 " false" } }
+  { printf("%s * %s == %s == %s ?\n\n", a, b, z, ab) }
+' |& less
+
+srmul a -0.098017 (bdc8bd36) b 10.153169 (41227361) z -0.995185 (bf7ec46a) false
+-0.098017 * 10.153169 == -0.995185 == -0.995183 ?
+
+srmul a -0.995185 (bf7ec46d) b 10.153169 (41227361) z -10.104278 (c121ab1f) false
+-0.995185 * 10.153169 == -10.104278 == -10.1043 ?
+
+
+OOOPS
+
+-10.104281
+srmul a  0.995185 (3f7ec46d) b -10.153169 (c1227361) z -10.104278 (c121ab1f) false
+0.995185 * -10.153169 == -10.104278 == -10.104281 ?
+
+0.995183
+srmul a -0.098017 (bdc8bd36) b -10.153169 (c1227361) z  0.995185 (3f7ec46a) false
+-0.098017 * -10.153169 == 0.995185 == 0.995183 ?
+
+
+GOOD ENOUGH FOR NOW
+
+
+q
+egrep -rh '^srmul.*a=' $d | grep -v xxx | grep -v Binary | sed 's/=/ /g' | awk '
+  { a=$3; b=$6; z=$9 }
+  { ab=sprintf("%.6f", a*b) }
+  { if (ab==z) { print $0 }}
+' |& sort | uniq > tmp.mul
+
+
+travis test looks like
+
+script:
+  # set -e => exit on failure "you can sandwich stuff in script w/ set -e and set +e."
+  - set -e
+
+  ### FFT REGRESSIONS
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir regression; cd regression
+  # - ls -l ../bin
+  - ../bin/golden_test.csh -sim verilator |& tee test_results.log | egrep 'PASS|FAIL|ERR'
+  #
+  # Here's a tricky thing...it passes when it fails and it fails when it passes :(
+  # Also---FIXME---above command should be responsible for PASS/FAIL exit codes
+  - egrep 'FAIL|ERR' test_results.log && exit 13 || echo okay
+
+  ### SIMV ANALYZER
+  # I have this test for the analyzer, why not use it.
+  - cd ${TRAVIS_BUILD_DIR}/bin/simv_analysis; make test
+
+
+golden_test.sh be all
+
+  alias mr   make -f $MAKEFILE run TOP=fft SIM=$SIMULATOR
+
+Makefile's just kinda
+
+# E.g. VTOP=Vtop_fft
+VTOP := Vtop_$(TOP)
+run: run_$(SIM)
+run_verilator: obj_dir/$(VTOP) $(DESIGN_HOME)/bin/bsr.awk
+        @echo ""
+        @echo Now Running verilator simulator obj_dir/$(VTOP)
+        @echo ==================================================
+        obj_dir/$(VTOP) |& $(DESIGN_HOME)/bin/bsr.awk %9.6f > $(TOP).log
+
+obj_dir/$(VTOP): obj_dir/$(VTOP).mk
+        make -j -C obj_dir/ -f $(VTOP).mk $(VTOP)
+
+
+
+and then uh Vtop_fft be a binary so :(
+
+
+okay finally we gettin somewheres maybe
+
+VERILATOR_TESTBENCH := $(DESIGN_HOME)/tst/$(TOP).cpp
+obj_dir/$(VTOP).mk: $(VERILATOR_TESTBENCH) $(GENESIS_VLOG_LIST)
+        verilator -Wno-fatal -Wall --cc \
+          genesis_verif/top_fft.v --exe $(VERILATOR_TESTBENCH) \
+          --trace -y genesis_verif/ -y $(DESIGN_HOME)/rtl/lib/
+
+./tst/fft.cpp
+
+Okay so maybe it's gonna go something like this
+
+cd test
+verilator -Wno-fatal -Wall --cc \
+          fpu_testbench.v \
+          --exe fpu_testbench.cpp  \
+          --trace \
+          -y ../rtl
+
+
+okay so maybe i need
+* fpu_testbench.v based on old top_fft.v
+* fpu_testbench.cpp based on old top_fft.cpp
+
+old top_fft.v looks like
+
+module top_fft();
+   // BEGIN WIRE DECLARATIONS
+
+   //------------------------------------------------
+   // begin fftctl->printwires('   ', 'wire_list')
+
+   logic  clk;   // Clock
+   logic  rst_n; // Reset signal per power-up
+ 
+   // Butterfly unit operands
+   logic [5:0] BFLY0_op1_ix; 
+   logic [5:0] BFLY0_op2_ix; 
+
+   // Remaining output signals
+   logic [7:0] fftctl_cycle_num; // 0, 1, 2, ...
+   logic       busy;          // hi while busy computing fft
+   logic       fftclk;          // local_clk = global_clk/1
+...
+
+   initial begin
+      // Generate a square wave to test the FFT, e.g.:
+      // @a_real = (1, 0, 1, 0,  1, 0, 1, 0);    // bitreverse(1,1,1,1,  0,0,0,0)
+      // @a_imag = (0, 0, 0, 0,  0, 0, 0, 0);
+
+      // ix=00 => bank 0, row 0 <= ( 1.000,  0.000)
+      top_fft.fftram.SRAM000.mem[0][63:32] = _shortrealtobits_1;
+      top_fft.fftram.SRAM000.mem[0][31: 0] = _shortrealtobits_0;
+...
+   end
+
+   initial begin
+      $display("\nfftmem.vp: n_butterfly_units=1 and n_fft_points=64\n");
+   end
+
+   // Generate clock and connect it to local wire ".clk" (vcs only)
+   clock_unq1  GCLK(.clk(clk), .reset(rst_n));       // .remote(local)
+
+   // Instantiate swizzle units BFLY0_op1_swizzle, BFLY0_op2_swizzle etc.
+   swizzle_unq1  BFLY0_op1_swizzle(.addr_i(BFLY0_op1_ix), .rnum_o(BFLY0_op1_rnum), .bnum_o(BFLY0_op1_bnum));
+   swizzle_unq1  BFLY0_op2_swizzle(.addr_i(BFLY0_op2_ix), .rnum_o(BFLY0_op2_rnum), .bnum_o(BFLY0_op2_bnum));
+
+
+   // DEBUG/TEST info: show swizzle translations.
+   // FIXME I think this is supposed to be "negedge fftclk..?"
+   // FIXME originally displayed at 602, 1602, 2602,...right???
+   always @ (fftclk) if (fftclk==1) begin   // 602,1602,2602...(?)
+      $display("top_fft %1d: BFLY0_op1 ix %02d comes from bank %2d row %3d", $time,
+               BFLY0_op1_ix, BFLY0_op1_bnum, BFLY0_op1_rnum);
+      $display("top_fft %1d: BFLY0_op2 ix %02d comes from bank %2d row %3d", $time,
+               BFLY0_op2_ix, BFLY0_op2_bnum, BFLY0_op2_rnum);
+      $display("top_fft");
+   end // always @ (posedge fftclk)
+
+
+
+   // Instantiate the fft memory and connect to it..
+   fftram_unq1  fftram  // .remote(local)
+      (
+       .clk_i(fftclk)
+
+     // op1, op2 addresses from fftram (bnum)
+     ,.BFLY0_op1_bnum_i(BFLY0_op1_bnum)        ,.BFLY0_op2_bnum_i(BFLY0_op2_bnum)
+
+     // op1, op2 addresses from fftram (rnum)
+     ,.BFLY0_op1_rnum_i(BFLY0_op1_rnum)        ,.BFLY0_op2_rnum_i(BFLY0_op2_rnum)
+
+     // Data OUT from fftram (and in) to butterfly units: in1, in2
+     ,.BFLY0_in1_data_o(BFLY0_in1_data)         ,.BFLY0_in2_data_o(BFLY0_in2_data)
+
+     // Data IN from butterfly units (and out) to fftram: out1, out2
+     ,.BFLY0_out1_data_i(BFLY0_out1_data)      ,.BFLY0_out2_data_i(BFLY0_out2_data)
+
+
+   clock_unq1  GCLK(.clk(clk), .reset(rst_n));       // .remote(local)
+   swizzle_unq1  BFLY0_op1_swizzle(.addr_i(BFLY0_op1_ix), .rnum_o(BFLY0_op1_rnum), .bnum_o(BFLY0_op1_bnum));
+   swizzle_unq1  BFLY0_op2_swizzle(.addr_i(BFLY0_op2_ix), .rnum_o(BFLY0_op2_rnum), .bnum_o(BFLY0_op2_bnum));
+    butterfly_unq1  BFLY0(.fftclk(fftclk),
+   fftram_unq1  fftram  // .remote(local)
+   fftctl_unq1  fftctl
+   twiddle_unq1  twiddle
+
+
+     ,.fft_started(busy | start)
+     );
+
+
+
+   ////////////////////////////////////////////////////////////////////////
+   // cycle counter I guess
+   //
+   logic [31:0] cycle_counter;
+
+   always @ (posedge clk) begin
+     if (rst_n) cycle_counter <= 32'b0;
+     else       cycle_counter <= cycle_counter + 32'b1;
+   end
+
+
+   always @ (posedge clk) begin
+      $display("------------------------------------------------------------------------------");
+      $display("clock.vp: reset=%d, ncy=%4d, time=%6d ns", rst_n, cycle_counter, $time/1000);
+      $display("------------------------------------------------------------------------------");
+   end
+
+==============================================================================
+==============================================================================
+==============================================================================
+
+
+unq[123] = sub, mul, add respectively
+
+less butterfly_unq1.v 
+
+     fpu_unq1  sub_t1 (.a(t1a), .b(t1b), .z(t1));
+     fpu_unq2  mult_t1a (.a(twc), .b(in2[63:32]), .z(t1a));
+     fpu_unq2  mult_t1b (.a(tws), .b(in2[31: 0]), .z(t1b));
+
+   ////////////////////////////////////////////////////////////////////////
+   // $t2 = $s * $in2_real + $c * $in2_imag;
+     // $t2  = $t2a + $t2b;
+     // $t2a = $s * $in2_real;
+     // $t2b = $c * $in2_imag;
+
+
+     fpu_unq3  add_t2 (.a(t2a), .b(t2b), .z(t2));
+     fpu_unq2  mult_t2a (.a(tws), .b(in2[63:32]), .z(t2a));
+     fpu_unq2  mult_t2b (.a(twc), .b(in2[31: 0]), .z(t2b));
+
+
+   always @(fftclk) if (ready) begin
+      // #2
+      $display("%m t5 ------------------------");
+      $display("%m t5 %5d: in1(r,i)= (bsr'%08X,bsr'%08X)", $time, in1[63:32], in1[31: 0]);
+      $display("%m t5 %5d: in2(r,i)= (bsr'%08X,bsr'%08X)", $time, in2[63:32], in2[31: 0]);
+      $display("%m t5");
+      $display("%m t5 %5d: t1  = bsr'%08X",     $time, t1);
+      $display("%m t5 %5d: t1a = bsr'%08X",     $time, t1a);
+      $display("%m t5 %5d: t1b = bsr'%08X",     $time, t1b);
+      $display("%m t5");
+      $display("%m t5 %5d: t2  = bsr'%08X",     $time, t2);
+      $display("%m t5 %5d: t2a = bsr'%08X",     $time, t2a);
+      $display("%m t5 %5d: t2b = bsr'%08X",     $time, t2b);
+      $display("%m t5");
+
+      $display("%m t5 %5d: out1(r,i)= (in1_real+t1, in1_imag+t2) = (bsr'%08X,bsr'%08X)",
+        $time, out1[63:32], out1[31: 0]);
+      $display("%m t5 %5d: out2(r,i)= (in1_real-t1, in1_imag-t2) = (bsr'%08X,bsr'%08X)",
+        $time, out2[63:32], out2[31: 0]);
+      $display("%m t5 ------------------------");
+   end
+
+
+
+module fpu_unq1 (
+  input  logic [31:0] a,
+  input  logic [31:0] b,
+  output logic [31:0] z
+  );
+
+    `ifndef SRSUB_TEST
+        addsub FPU (.op(1'b1), .a(a), .b(b), .z(z));
+    `else
+        // FIXME really? is this the best place for this???
+        wire [31:0] z1; wire [31:0] z2; wire [31:0] z3; wire [31:0] z4;
+        srsub SUB41(.op(1'b1), .a($shortrealtobits(4.0)), .b($shortrealtobits(1.0)), .z(z1));
+        srsub SUB43(.op(1'b1), .a($shortrealtobits(4.0)), .b($shortrealtobits(3.0)), .z(z2));
+        srsub SUB14(.op(1'b1), .a($shortrealtobits(1.0)), .b($shortrealtobits(4.0)), .z(z3));
+        srsub SUB34(.op(1'b1), .a($shortrealtobits(3.0)), .b($shortrealtobits(4.0)), .z(z4));
+        assign z = z1|z2|z3|z4;
+    `endif
+
+
+endmodule
+
+module fpu_unq2 (
+  input  logic [31:0] a,
+  input  logic [31:0] b,
+  output logic [31:0] z
+  );
+
+        srmul MUL (.a(a), .b(b), .z(z));
+
+
+
+endmodule
+
+module fpu_unq3 (
+  input  logic [31:0] a,
+  input  logic [31:0] b,
+  output logic [31:0] z
+  );
+
+        addsub FPU (.op(1'b0), .a(a), .b(b), .z(z));
+
+
+
+endmodule
+
+ls -1 ../../rtl/lib/*.v
+../../rtl/lib/addsub.v
+../../rtl/lib/sradd.v
+../../rtl/lib/srmul.v
+../../rtl/lib/srsub.v
+
+
+TEST 1: add 1+1
+
+YOU WILL NEED
+
+test.cpp
+test.v
+
+module test_adder0 ();
+
+  logic [31:0] a;
+  logic [31:0] b;
+  logic [31:0] z;
+
+  assign a = $shortrealtobits(4.0)
+  assign b = $shortrealtobits(3.0)
+
+  srsub ADD(.op(1'b0), .a(a), .b(b), .z(z));
+  $display("srmul a=%9.6f (%08X) b=%9.6f (%08X) z=%9.6f (%08X)",
+
+endmodule
+
+
+verilator -Wno-fatal -Wall --cc \
+          test_adder0.v \
+          --exe test_adder0.cpp  \
+          --trace \
+          -y ..
+
+
+
+
+obj_dir/$(VTOP): obj_dir/$(VTOP).mk
+
+
+VTOP=Vtest_adder0
+make -j -C obj_dir/ -f ${VTOP}.mk ${VTOP}
+
+
+
+obj_dir/Vtest_adder0
+
+
+
+/bin/rm -rf obj_dir
+c; verilator -Wno-fatal -Wall --cc test_adder0.v --exe test_adder0.cpp --trace -y ..
+make -j -C obj_dir/ -f ${VTOP}.mk ${VTOP}
+obj_dir/Vtest_adder0
+
+
+
+
+
+
+
+
+
+
+
+

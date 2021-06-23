@@ -56,9 +56,6 @@ The test reports worst-case error found (0.2 ppm in this example) along with the
 ```
 ADD TEST
 ------------------------------------------------------------------------
- 6.055668e-39 +  3.904965e-37 =  3.994018e-37 =?  3.965522e-37 :: err= 7185.915527 ppm DENORM FAIL
- 0041f0bd +  0304e10c =  0307e8ce =?  0306f092 :: FALSE
-
 Number of tests:    2000
 Exact matches:      1797
 Acceptable error:    188

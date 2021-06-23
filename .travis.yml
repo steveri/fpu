@@ -1,33 +1,29 @@
-dist: trusty
-language: c
-sudo: false
+dist:     trusty
+language: python
+python:   3.6
 
 notifications:
   email:
     recipients:
       - steveri@stanford.edu
-    # on_success: never # default: change
-    on_failure: always # default: always
+    # on_success: never # default is "change"
+    # on_failure: always  # default is "always"
 
-addons:
-  apt:
-    # sources:
-    # - ubuntu-toolchain-r-test
-    packages:
-      - csh
-      - verilator
-    # - build-essential
-
-# install:
-  # Current working directory: /home/travis/build/StanfordAHA/fftgen
-
-  # (verilator, csh) already installed above ("addons/apt" section)
-
-  # Genesis2
-  # - source bin/setup_genesis.sh
+install:
+  - test/test.sh install
 
 script:
-  # set -e => exit on failure "you can sandwich stuff in script w/ set -e and set +e."
-  - set -e
+  # Current working directory: /home/travis/build/steveri/easysteps
+  - set -e ; # Die at first error
 
-  - echo hello woild
+  - echo "--- TEST EASYSTEPS"
+  - EASYSTEPS_TOP=. test/test.sh build compare
+  - /bin/rm -rf build_{before,after}
+
+script:
+  # Current working directory: /home/travis/build/steveri/easysteps
+  - set -e ; # Die at first error
+
+  - echo "--- TEST EASYSTEPS-ALT"
+  - EASYSTEPS_TOP=easysteps-alt test/test.sh build compare
+  - /bin/rm -rf build_{before,after}

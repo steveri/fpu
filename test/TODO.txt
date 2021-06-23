@@ -1,24 +1,41 @@
 TODO - misc
-* multiplier tests!
-* fix denorm / NaN so there are fewer failures in the tests
-* better, less-random test vectors, see below
-* parameterizable fields e.g. internal precision, mantissa and exponent size etc.
-* test should report: "a out of range" or "b" or "z" if less than 10^36 or whatever
 
+* Pick a freeware license!
+
+* Denorms and NaNs don't work so good. Tests involving denorms and NaNs generally fail. Currently I ignore them. Maybe they should be fixed to work better?
+
+* Should probably have better, less-random test vectors, see below.
+
+* Parameterizable fields e.g. internal precision, mantissa and exponent size etc.
+
+* Should repo be in StanfordVLSI?
 
 ------------------------------------------------------------------------
 TODO - better, less-random test vectors
 
 Most of the "random" operands are nowhere near being within range of one another e.g.
+```
+ 1.340054e-32 - -8.434095e-19 =  8.434095e-19
+```
 
- 1.340054e-32 - -8.434095e-19 =  8.434095e-19 =?  8.434095e-19 :: err= 0.000000 ppm EXACT
- 0a8b28bc -  a178ee38 =  2178ee38 =?  2178ee38 :: TRUE
+The test numbers should perhaps be biased towards numbers that are similar enough in range such that the FPU gets a reasonable workout...
 
-The test numbers should be biased towards numbers that are similar enough in range such that the FPU gets a reasonable workout...
+Idea: How about separate random numbers for mantissa (truly random) vs. exponent (like a bell curve distribution with same-exponent in the middle like).
 
-Ideas:
-* separate random numbers for mantissa (truly random) vs. exponent (like a bell curve distribution with same-exponent in the middle like).
+========================================================================
+NOTES: Single precision floating point (see wikipedia)
+```
+ZERO                0 0x00 0x000000 (  0.0  )
+smallest pos denorm 0 0x00 0x000001 (1.4e-45)
+largest  pos denorm 0 0x00 0f7fffff (1.2e-38)
+smallest pos norm   0 0x01 0x000000 (1.2e-38)
+largest  pos norm   0 0xfe 0x7fffff (3.4e+38)
+pos infinity        0 0xff 0x000000
+???                 0 0xff 0xXXXXXX
 
+qNaN                x 0xff 0x400001 (qNaN) (ffc0_0001)
+sNaN                x 0xff 0x000001 (sNaN) (ff80_0001)
+```
 
 
 ========================================================================

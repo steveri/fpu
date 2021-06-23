@@ -15,26 +15,24 @@ addons:
       - verilator
 
 script:
-  - set -e ; # Die at first error
-  - cd test
+
+  # Setup
+  - set -e  ; # Die at first error
+  - cd test ; # CD to test directory
+
+  # Add test BUILD
+  - echo 'travis_fold:start:NAME'
   - make clean; make build TEST=ADD
+  - echo 'travis_fold:end:NAME'
 
-
-script:
-  - set -e ; # Die at first error
-  - cd test
+  # Add test RUN
   - make run TEST=ADD |& tee result
   - egrep '^Outright fails.* 0$' result || echo FAIL
   - egrep '^Outright fails.* 0$' result || exit 13
 
-script:
-  - set -e ; # Die at first error
-  - make clean; make build TEST=SUB
 
-
-
-script:
   # 
+  - make clean; make build TEST=SUB
   - echo "+++SUB-RUN";   make run   TEST=SUB |& tee result
   - egrep '^Outright fails.* 0$' result && echo FAIL
   - egrep '^Outright fails.* 0$' result && exit 13

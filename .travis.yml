@@ -9,21 +9,24 @@ notifications:
     # on_success: never # default is "change"
     # on_failure: always  # default is "always"
 
-install:
-  - test/test.sh install
+# install:
+#   - test/test.sh install
 
 script:
   # Current working directory: /home/travis/build/steveri/easysteps
   - set -e ; # Die at first error
 
-  - echo "--- TEST EASYSTEPS"
-  - EASYSTEPS_TOP=. test/test.sh build compare
-  - /bin/rm -rf build_{before,after}
+  - hello world
 
-script:
-  # Current working directory: /home/travis/build/steveri/easysteps
-  - set -e ; # Die at first error
+#   - echo "--- TEST EASYSTEPS"
+#   - EASYSTEPS_TOP=. test/test.sh build compare
+#   - /bin/rm -rf build_{before,after}
 
-  - echo "--- TEST EASYSTEPS-ALT"
-  - EASYSTEPS_TOP=easysteps-alt test/test.sh build compare
-  - /bin/rm -rf build_{before,after}
+# script:
+#   # Current working directory: /home/travis/build/steveri/easysteps
+#   - set -e ; # Die at first error
+# 
+#   - echo "--- TEST EASYSTEPS-ALT"
+#   - EASYSTEPS_TOP=easysteps-alt test/test.sh build compare
+#   - /bin/rm -rf build_{before,after}
+# 

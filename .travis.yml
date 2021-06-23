@@ -14,11 +14,10 @@ addons:
     packages:
       - verilator
 
-install:
+script:
   - set -e ; # Die at first error
   - cd test
-  - make clean
-  - make build TEST=ADD
+  - make clean; make build TEST=ADD
 
 
 script:
@@ -28,10 +27,9 @@ script:
   - egrep '^Outright fails.* 0$' result || echo FAIL
   - egrep '^Outright fails.* 0$' result || exit 13
 
-install:
+script:
   - set -e ; # Die at first error
-  - echo "---SUB-CLEAN"; make clean
-  - echo "---SUB-BUILD"; make build TEST=SUB
+  - make clean; make build TEST=SUB
 
 
 

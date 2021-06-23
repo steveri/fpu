@@ -18,7 +18,8 @@ script:
 
   # Fold experiments
   - echo 'Configuring...' && echo -en 'travis_fold:start:script.1\\r'
-  - ./autogen.sh && ./configure
+  # - ./autogen.sh && ./configure
+  - echo foo
   - echo -en 'travis_fold:end:script.1\\r'
 
 

@@ -23,6 +23,15 @@ script:
   - echo -en 'travis_fold:end:script.1\\r'
 
 
+  # Fold experiments
+  - echo 'Two echoes' && echo -en 'travis_fold:start:script.1\\r'
+  # - ./autogen.sh && ./configure
+  - echo foo
+  - echo bar
+  - echo -en 'travis_fold:end:script.1\\r'
+
+
+
   # Setup
   - set -e  ; # Die at first error
   - cd test ; # CD to test directory
@@ -30,9 +39,9 @@ script:
 
 
   # Add test BUILD
-  - echo 'travis_fold:start:NAME'
+  - echo 'Add test BUILD' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=ADD
-  - echo 'travis_fold:end:NAME'
+  - echo -en 'travis_fold:end:build\\r'
 
   # Add test RUN
   - make run TEST=ADD |& tee result

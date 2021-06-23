@@ -17,7 +17,7 @@ build:
 	CPPFLAGS=-Dtest_$(TEST) make -j -C obj_dir/ -f V$(TEST).mk V$(TEST)
 
 run:
-	obj_dir/V$(TEST)
+	@obj_dir/V$(TEST)
 
 all:
 	make clean

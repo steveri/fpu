@@ -22,7 +22,7 @@ script:
 
 
   # Add test BUILD
-  - echo 'Add test BUILD' && echo -en 'travis_fold:start:build\\r'
+  - echo '$ make build TEST=ADD' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=ADD
   - echo -en 'travis_fold:end:build\\r'
 
@@ -31,7 +31,7 @@ script:
 
 
   # Sub test BUILD
-  - echo 'Sub test BUILD' && echo -en 'travis_fold:start:build\\r'
+  - echo '$ make build TEST=SUB' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=SUB
   - echo -en 'travis_fold:end:build\\r'
 
@@ -40,7 +40,7 @@ script:
 
 
   # Mul test BUILD
-  - echo 'Mul test BUILD' && echo -en 'travis_fold:start:build\\r'
+  - echo '$ make build TEST=MUL' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=MUL
   - echo -en 'travis_fold:end:build\\r'
 

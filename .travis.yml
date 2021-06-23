@@ -9,6 +9,11 @@ notifications:
     # on_success: never # default is "change"
     # on_failure: always  # default is "always"
 
+addons:
+  apt:
+    packages:
+      - verilator
+
 # install:
 #   - test/test.sh install
 

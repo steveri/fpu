@@ -16,7 +16,7 @@ script:
   # Current working directory: /home/travis/build/steveri/easysteps
   - set -e ; # Die at first error
 
-  - hello world
+  - echo hello world
 
 #   - echo "--- TEST EASYSTEPS"
 #   - EASYSTEPS_TOP=. test/test.sh build compare

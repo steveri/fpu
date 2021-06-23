@@ -13,17 +13,17 @@ notifications:
 #   - test/test.sh install
 
 script:
-  # Current working directory: /home/travis/build/steveri/easysteps
   - set -e ; # Die at first error
+  - cd test;
   # 
-  - echo "---ADD-CLEAN"; cd test; make clean
-  - echo "---ADD-BUILD"; cd test; make build TEST=ADD
-  - echo "+++ADD-RUN";   cd test; make run   TEST=ADD
+  - echo "---ADD-CLEAN"; make clean
+  - echo "---ADD-BUILD"; make build TEST=ADD
+  - echo "+++ADD-RUN";   make run   TEST=ADD
   # 
-  - echo "---SUB-CLEAN"; cd test; make clean
-  - echo "---SUB-BUILD"; cd test; make build TEST=SUB
-  - echo "+++SUB-RUN";   cd test; make run   TEST=SUB
+  - echo "---SUB-CLEAN"; make clean
+  - echo "---SUB-BUILD"; make build TEST=SUB
+  - echo "+++SUB-RUN";   make run   TEST=SUB
   # 
-  - echo "---MUL-CLEAN"; cd test; make clean
-  - echo "---MUL-BUILD"; cd test; make build TEST=MUL
-  - echo "+++MUL-RUN";   cd test; make run   TEST=MUL
+  - echo "---MUL-CLEAN"; make clean
+  - echo "---MUL-BUILD"; make build TEST=MUL
+  - echo "+++MUL-RUN";   make run   TEST=MUL

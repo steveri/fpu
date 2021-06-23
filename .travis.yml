@@ -14,20 +14,32 @@ addons:
     packages:
       - verilator
 
-# install:
-#   - test/test.sh install
+install:
+  - set -e ; # Die at first error
+  - cd test
+  - make clean
+  - make build TEST=ADD
+
 
 script:
   - set -e ; # Die at first error
-  - cd test;
-  # 
-  - echo "---ADD-CLEAN"; make clean
-  - echo "---ADD-BUILD"; make build TEST=ADD
-  - echo "+++ADD-RUN";   make run   TEST=ADD
-  # 
+  - cd test
+  - make run TEST=ADD |& tee result
+  - egrep '^Outright fails.* 0$' result || echo FAIL
+  - egrep '^Outright fails.* 0$' result || exit 13
+
+install:
+  - set -e ; # Die at first error
   - echo "---SUB-CLEAN"; make clean
   - echo "---SUB-BUILD"; make build TEST=SUB
-  - echo "+++SUB-RUN";   make run   TEST=SUB
+
+
+
+script:
+  # 
+  - echo "+++SUB-RUN";   make run   TEST=SUB |& tee result
+  - egrep '^Outright fails.* 0$' result && echo FAIL
+  - egrep '^Outright fails.* 0$' result && exit 13
   # 
   - echo "---MUL-CLEAN"; make clean
   - echo "---MUL-BUILD"; make build TEST=MUL

@@ -264,7 +264,7 @@ int main(int argc, char **argv, char **env) {
 
   tfp->close();
 
-  if (! n_fail) {
+  if (n_fail != 0) {
       printf("Test FAILED because %d outright fails\n", n_fail);
       exit(13);
   } else {

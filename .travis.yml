@@ -27,7 +27,7 @@ script:
   - echo -en 'travis_fold:end:build\\r'
 
   # Add test RUN
-  - make run TEST=ADD |& tee result
+  - make run TEST=ADD
 
 
   # Sub test BUILD
@@ -36,7 +36,7 @@ script:
   - echo -en 'travis_fold:end:build\\r'
 
   # Sub test RUN
-  - make run TEST=SUB |& tee result
+  - make run TEST=SUB
 
 
   # Mul test BUILD
@@ -45,6 +45,6 @@ script:
   - echo -en 'travis_fold:end:build\\r'
 
   # Mul test RUN
-  - make run TEST=MUL |& tee result
+  - make run TEST=MUL
 
 

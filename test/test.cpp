@@ -121,8 +121,13 @@ int main(int argc, char **argv, char **env) {
       top->a = myrand32();
       top->b = myrand32();
 
-      // Four minus/times two
+      // Example: Four and two
       // top->a = 0x40000000; top->b = 0x3f800000;
+
+      // Example: -1 and 2
+      // top->a = shortreal2bits( -1.0);
+      // top->b = shortreal2bits(  2.0);
+
 
       float afloat = bits2shortreal(top->a);
       float bfloat = bits2shortreal(top->b);
@@ -292,15 +297,3 @@ Max error found:  39506.546875 ppm
 -9.282572e-39 + -2.200802e-38 = -3.252678e-38 =? -3.129060e-38 :: err=39506.546875 ppm
 --------------------------------------------------------------
 */
-
-/*
-  JUNK
-  top->a = shortreal2bits( -1.0);
-  top->b = shortreal2bits(  2.0);
-
-  top->a = shortreal2bits(  1.0);
-  top->b = shortreal2bits(100.0);
-
-  // printf("%02d: ok looks like %x + %x = %x\n", i, top->a, top->b, top->z);
-*/
-

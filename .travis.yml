@@ -1,6 +1,6 @@
 dist:     trusty
-language: python
-python:   3.6
+# language: python
+# python:   3.6
 
 notifications:
   email:
@@ -20,6 +20,15 @@ script:
   - set -e  ; # Die at first error
   - cd test ; # CD to test directory
 
+  # Fold experiments
+  - echo 'Configuring...' && echo -en 'travis_fold:start:script.1\\r'
+  - echo hello world
+  - echo hello world 1
+  - echo hello world 2
+  - echo hello world 3
+  - echo -en 'travis_fold:end:script.1\\r'
+
+
   # Add test BUILD
   - echo 'travis_fold:start:NAME'
   - make clean; make build TEST=ADD
@@ -32,11 +41,16 @@ script:
 
 
   # 
-  - make clean; make build TEST=SUB
-  - echo "+++SUB-RUN";   make run   TEST=SUB |& tee result
+  - make clean
+  - make TEST=SUB build
+  - make TEST=SUB run |& tee result
   - egrep '^Outright fails.* 0$' result && echo FAIL
   - egrep '^Outright fails.* 0$' result && exit 13
+
   # 
-  - echo "---MUL-CLEAN"; make clean
-  - echo "---MUL-BUILD"; make build TEST=MUL
-  - echo "+++MUL-RUN";   make run   TEST=MUL
+  - make clean
+  - make TEST=MUL build
+  - make TEST=MUL run |& tee result
+  - egrep '^Outright fails.* 0$' result && echo FAIL
+  - egrep '^Outright fails.* 0$' result && exit 13
+  

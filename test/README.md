@@ -41,7 +41,7 @@ make -j -C obj_dir/ -f Vtest_ADD.mk Vtest_ADD
 
 # "make run" does this:
 obj_dir/Vtest_ADD
-``
+```
 
 # HOW TO TEST SUBTRACTION and MULTIPLICATION
 

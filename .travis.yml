@@ -16,17 +16,16 @@ addons:
 
 script:
 
+  # Fold experiments
+  - echo 'Configuring...' && echo -en 'travis_fold:start:script.1\\r'
+  - ./autogen.sh && ./configure
+  - echo -en 'travis_fold:end:script.1\\r'
+
+
   # Setup
   - set -e  ; # Die at first error
   - cd test ; # CD to test directory
 
-  # Fold experiments
-  - echo 'Configuring...' && echo -en 'travis_fold:start:script.1\\r'
-  - echo hello world
-  - echo hello world 1
-  - echo hello world 2
-  - echo hello world 3
-  - echo -en 'travis_fold:end:script.1\\r'
 
 
   # Add test BUILD

@@ -1,5 +1,5 @@
 dist:     trusty
-# language: python
+language: c
 # python:   3.6
 
 notifications:
@@ -16,26 +16,9 @@ addons:
 
 script:
 
-  # Fold experiments
-  - echo 'Configuring...' && echo -en 'travis_fold:start:script.1\\r'
-  # - ./autogen.sh && ./configure
-  - echo foo
-  - echo -en 'travis_fold:end:script.1\\r'
-
-
-  # Fold experiments
-  - echo 'Two echoes' && echo -en 'travis_fold:start:script.1\\r'
-  # - ./autogen.sh && ./configure
-  - echo foo
-  - echo bar
-  - echo -en 'travis_fold:end:script.1\\r'
-
-
-
   # Setup
   - set -e  ; # Die at first error
   - cd test ; # CD to test directory
-
 
 
   # Add test BUILD
@@ -45,21 +28,23 @@ script:
 
   # Add test RUN
   - make run TEST=ADD |& tee result
-  - egrep '^Outright fails.* 0$' result || echo FAIL
-  - egrep '^Outright fails.* 0$' result || exit 13
 
 
-  # 
-  - make clean
-  - make TEST=SUB build
-  - make TEST=SUB run |& tee result
-  - egrep '^Outright fails.* 0$' result && echo FAIL
-  - egrep '^Outright fails.* 0$' result && exit 13
+  # Sub test BUILD
+  - echo 'Sub test BUILD' && echo -en 'travis_fold:start:build\\r'
+  - make clean; make build TEST=SUB
+  - echo -en 'travis_fold:end:build\\r'
 
-  # 
-  - make clean
-  - make TEST=MUL build
-  - make TEST=MUL run |& tee result
-  - egrep '^Outright fails.* 0$' result && echo FAIL
-  - egrep '^Outright fails.* 0$' result && exit 13
-  
+  # Sub test RUN
+  - make run TEST=SUB |& tee result
+
+
+  # Mul test BUILD
+  - echo 'Mul test BUILD' && echo -en 'travis_fold:start:build\\r'
+  - make clean; make build TEST=MUL
+  - echo -en 'travis_fold:end:build\\r'
+
+  # Mul test RUN
+  - make run TEST=MUL |& tee result
+
+

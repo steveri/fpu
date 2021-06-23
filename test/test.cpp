@@ -258,7 +258,14 @@ int main(int argc, char **argv, char **env) {
 //----------------------------------------------------------------
 
   tfp->close();
-  exit(0);
+
+  if (n_fail) {
+      printf("Test FAILED because %d outright fails\n", n_fail);
+      exit(13);
+  } else {
+      printf("Test PASSED because %d outright fails\n", n_fail);
+      exit(0);
+  }
 }
 
 /*

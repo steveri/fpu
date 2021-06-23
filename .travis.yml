@@ -15,18 +15,15 @@ notifications:
 script:
   # Current working directory: /home/travis/build/steveri/easysteps
   - set -e ; # Die at first error
-
-  - echo hello world
-
-#   - echo "--- TEST EASYSTEPS"
-#   - EASYSTEPS_TOP=. test/test.sh build compare
-#   - /bin/rm -rf build_{before,after}
-
-# script:
-#   # Current working directory: /home/travis/build/steveri/easysteps
-#   - set -e ; # Die at first error
-# 
-#   - echo "--- TEST EASYSTEPS-ALT"
-#   - EASYSTEPS_TOP=easysteps-alt test/test.sh build compare
-#   - /bin/rm -rf build_{before,after}
-# 
+  # 
+  - echo "---ADD-CLEAN"; cd test; make clean
+  - echo "---ADD-BUILD"; cd test; make build TEST=ADD
+  - echo "+++ADD-RUN";   cd test; make run   TEST=ADD
+  # 
+  - echo "---SUB-CLEAN"; cd test; make clean
+  - echo "---SUB-BUILD"; cd test; make build TEST=SUB
+  - echo "+++SUB-RUN";   cd test; make run   TEST=SUB
+  # 
+  - echo "---MUL-CLEAN"; cd test; make clean
+  - echo "---MUL-BUILD"; cd test; make build TEST=MUL
+  - echo "+++MUL-RUN";   cd test; make run   TEST=MUL

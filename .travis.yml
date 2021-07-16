@@ -46,5 +46,3 @@ script:
 
   # Mul test RUN
   - make run TEST=MUL
-
-

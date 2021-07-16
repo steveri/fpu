@@ -1,12 +1,6 @@
 # FPU - 32-bit single-precision floating point unit
 
-| Status                       |
-|------------------------------|
-| [![linux build status][1]][2]|
-
-[1]: https://travis-ci.com/steveri/fpu.svg?branch=master
-[2]: https://travis-ci.com/steveri/fpu
-
+[![Build Status](https://travis-ci.com/steveri/fpu.svg?branch=main)](https://travis-ci.com/steveri/fpu)
 
 A simple freeware 32-bit FPU.
 So far it's just add, subtract, and multiply. It's not even close to being IEEE compliant, but I think it can add 2.0 and 2.0 okay. It's designed to be synthesizable but I've never done that (yet). For now it's just RTL that runs correctly on a simulator.

@@ -36,15 +36,9 @@ jobs:
 
       - run: |
           echo "Job info"
-          echo "The job was automatically triggered by a ${{ github.event_name }} event."
-          echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-          echo "The name of your branch is '${{ github.ref }}' and your repository is '${{ github.repository }}'."
-
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-
-      - run: echo "This job's status is '${{ job.status }}'."
+          echo "Job triggered by '${{ github.event_name }}' event."
+          echo "Job now running on a '${{ runner.os }}' server hosted by GitHub!"
+          echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
 
       - name: Install verilator
         run: sudo apt-get install verilator
@@ -64,4 +58,32 @@ jobs:
           echo "========================================================================"
           make run TEST=ADD
 
+      - name: SUB test
+        run: |
+          cd test
+          make clean
 
+          echo "========================================================================"
+          echo "make build TEST=SUB"
+          echo "========================================================================"
+          make build TEST=SUB
+
+          echo "========================================================================"
+          echo "make run TEST=SUB"
+          echo "========================================================================"
+          make run TEST=SUB
+
+      - name: MUL test
+        run: |
+          cd test
+          make clean
+
+          echo "========================================================================"
+          echo "make build TEST=MUL"
+          echo "========================================================================"
+          make build TEST=MUL
+
+          echo "========================================================================"
+          echo "make run TEST=MUL"
+          echo "========================================================================"
+          make run TEST=MUL

@@ -24,12 +24,15 @@ jobs:
 
     steps:
 
-      # E.g.
+      # Example variable values
       #   ${{ github.event_name }} = 'push
       #   ${{ runner.os }}         = 'Linux'
       #   ${{ github.ref }}        = 'refs/heads/steveri-patch-1'
       #   ${{ github.repository }} = 'steveri/fpu'
       #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
 
       - run: |
           echo "Job info"
@@ -37,11 +40,14 @@ jobs:
           echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
           echo "The name of your branch is '${{ github.ref }}' and your repository is '${{ github.repository }}'."
 
-      - name: Check out repository code
-        uses: actions/checkout@v2
-
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
 
       - run: echo "This job's status is '${{ job.status }}'."
+
+      - run: make clean
+      - run: make build TEST=ADD
+      - run: make run   TEST=ADD
+
+

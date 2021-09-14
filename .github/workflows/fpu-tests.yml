@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: FPU Tests
 
 # Controls when the action will run. 
 # on:
@@ -16,8 +16,8 @@ on: [push]
 
 jobs:
 
-  # This workflow contains a single job called ? "Explore-GitHub-Actions" ?
-  Explore-GitHub-Actions:
+  # This workflow contains a single job called "FPU-Tests"
+  FPU-Tests:
 
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -49,8 +49,11 @@ jobs:
       - name: Install verilator
         run: sudo apt-get install verilator
 
-      - run: cd test; make clean
-      - run: cd test; make build TEST=ADD
-      - run: cd test; make run   TEST=ADD
+      - name: ADD test
+        run: |
+          cd test
+          make clean
+          make build TEST=ADD
+          make run   TEST=ADD
 
 

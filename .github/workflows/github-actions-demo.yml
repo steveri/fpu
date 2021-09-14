@@ -4,40 +4,25 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
 
-      # 'push'
-      - name: foo
+      # E.g.
+      #   ${{ github.event_name }} = 'push
+      #   ${{ runner.os }}         = 'Linux'
+      #   ${{ github.ref }}        = 'refs/heads/steveri-patch-1'
+      #   ${{ github.repository }} = 'steveri/fpu'
+      #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
+
+      - name: INFO
         run: |
           echo "The job was automatically triggered by a ${{ github.event_name }} event."
           echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
           echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
-      # 'Linux'
-      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-
-      # 'refs/heads/steveri-patch-1' , 'steveri/fpu'
-      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      # 'steveri/fpu'
-      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
-
-      - run: echo "The workflow is now ready to test your code on the runner."
-
-      # '/home/runner/work/fpu/fpu'
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
 
       - run: echo "This job's status is '${{ job.status }}'."
-
-      - run: |
-          echo "The job was automatically triggered by a ${{ github.event_name }} event."
-          echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-          echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."

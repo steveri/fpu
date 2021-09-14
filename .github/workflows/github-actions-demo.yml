@@ -47,7 +47,7 @@ jobs:
       - run: echo "This job's status is '${{ job.status }}'."
 
       - name: Install verilator
-        run: apt-get install verilator
+        run: sudo apt-get install verilator
 
       - run: cd test; make clean
       - run: cd test; make build TEST=ADD

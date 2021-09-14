@@ -1,4 +1,4 @@
-int SHOW_ALL_RESULTS = 0;
+int SHOW_ALL_RESULTS = 1;
 int PRINT_FINAL_SUMMARY = 1;
 
 #if defined(test_ADD)

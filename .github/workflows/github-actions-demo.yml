@@ -46,7 +46,7 @@ jobs:
 
       - run: echo "This job's status is '${{ job.status }}'."
 
-      - run: make clean
+      - run: cd test; make clean
       - run: make build TEST=ADD
       - run: make run   TEST=ADD
 

@@ -18,11 +18,19 @@ on: [push]
 # on: [ push, pull_request ]
 
 on:
+  # Every push
+  push:
+
+  # When requested manually
+  workflow_dispatch:
+
+  # Every morning at 3am [how does it know which branch to run?]
   schedule:
-    # min hr day JAN-DEC MON-SUN
-    - cron: '17,18,19 12 * * *'
+  # min hr day JAN-DEC MON-SUN
+  - cron: '19,20,21 12 * * *'
 
 
+########################################################################
 jobs:
 
   # This workflow contains a single job called "FPU-Tests"

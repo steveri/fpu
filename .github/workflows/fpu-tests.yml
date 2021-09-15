@@ -24,13 +24,6 @@ jobs:
 
     steps:
 
-      # Example variable values
-      #   ${{ github.event_name }} = 'push
-      #   ${{ runner.os }}         = 'Linux'
-      #   ${{ github.ref }}        = 'refs/heads/steveri-patch-1'
-      #   ${{ github.repository }} = 'steveri/fpu'
-      #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
-
       - run: |
           echo "Branch '${{ github.ref }}' in repo '${{ github.repository }}'."
 

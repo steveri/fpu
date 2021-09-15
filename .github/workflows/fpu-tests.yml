@@ -12,11 +12,6 @@ name: FPU Tests
 #   workflow_dispatch:
 
 # Controls when the action will run. 
-on: [push]
-
-# Another thing one could do:
-# on: [ push, pull_request ]
-
 on:
   # Every push
   push:

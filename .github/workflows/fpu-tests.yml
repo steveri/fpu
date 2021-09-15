@@ -83,25 +83,22 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=MUL"
           echo "========================================================================"
-          make run TEST=MUL |& tee ../test-results.add
+          make run TEST=MUL |& tee ../test-results.mul
 
       - name: Test results
         run: |
-
-          echo "========================================================================"
-          echo "ADD TEST RESULTS"
-          echo ""
+          echo
+          echo "ADD-TEST RESULTS"
           sed -n '/^Num/,$p' test-results.add
-          echo ""
 
           echo "========================================================================"
-          echo "SUB TEST RESULTS"
-          echo ""
+          echo "========================================================================"
+
+          echo "SUB-TEST RESULTS"
           sed -n '/^Num/,$p' test-results.sub
-          echo ""
 
           echo "========================================================================"
-          echo "MUL TEST RESULTS"
-          echo ""
+          echo "========================================================================"
+
+          echo "MUL-TEST RESULTS"
           sed -n '/^Num/,$p' test-results.mul
-          echo ""

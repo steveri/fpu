@@ -31,7 +31,7 @@ jobs:
       #   ${{ github.repository }} = 'steveri/fpu'
       #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
 
-      - run echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
+      - run: echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
 
       - name: Check out repository code
         uses: actions/checkout@v2

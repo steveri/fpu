@@ -1,8 +1,6 @@
 # FPU - 32-bit single-precision floating point unit
 
-| Status                 |
-|------------------------|
-| [![Build Status][1]][2]|
+[![Build Status][1]][2]
 
 [1]: https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml/badge.svg
 [2]: https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml

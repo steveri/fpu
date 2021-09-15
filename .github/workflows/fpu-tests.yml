@@ -19,10 +19,10 @@ on:
   # When requested manually
   workflow_dispatch:
 
-  # Every morning at 3am [how does it know which branch to run?]
+  # Schedule NOTE ONLY WORKS FOR MAIN BRANCH :(
   schedule:
-  # min hr day JAN-DEC MON-SUN
-  - cron: '22,23,24,25,26,27 12 * * *'
+    # Every morning at 3am ( min hr day JAN-DEC MON-SUN )
+    - cron: '0 3 * * *'
 
 
 ########################################################################
@@ -46,59 +46,59 @@ jobs:
       - name: Install verilator
         run: sudo apt-get install verilator
 
-#       - name: 'FPU tests: ADD'
-#         run: |
-#           cd test
-#           make clean
-# 
-#           echo "========================================================================"
-#           echo "make build TEST=ADD"
-#           echo "========================================================================"
-#           make build TEST=ADD
-# 
-#           echo "========================================================================"
-#           echo "make run TEST=ADD"
-#           echo "========================================================================"
-#           make run TEST=ADD |& tee ../test-results.add
-# 
-#       - name: 'FPU tests: SUB'
-#         run: |
-#           cd test
-#           make clean
-# 
-#           echo "========================================================================"
-#           echo "make build TEST=SUB"
-#           echo "========================================================================"
-#           make build TEST=SUB
-# 
-#           echo "========================================================================"
-#           echo "make run TEST=SUB"
-#           echo "========================================================================"
-#           make run TEST=SUB |& tee ../test-results.sub
-# 
-#       - name: 'FPU tests: MUL'
-#         run: |
-#           cd test
-#           make clean
-# 
-#           echo "========================================================================"
-#           echo "make build TEST=MUL"
-#           echo "========================================================================"
-#           make build TEST=MUL
-# 
-#           echo "========================================================================"
-#           echo "make run TEST=MUL"
-#           echo "========================================================================"
-#           make run TEST=MUL |& tee ../test-results.mul
-# 
-#       - name: Test results
-#         run: |
-#           echo
-#           echo "ADD-TEST RESULTS"
-#           sed -n '/^Num/,/^Max/p' test-results.add; tail -1 test-results.add
-#           echo "================================================================================"
-#           echo "SUB-TEST RESULTS"
-#           sed -n '/^Num/,/^Max/p' test-results.sub; tail -1 test-results.sub
-#           echo "================================================================================"
-#           echo "MUL-TEST RESULTS"
-#           sed -n '/^Num/,/^Max/p' test-results.mul; tail -1 test-results.mul
+      - name: 'FPU tests: ADD'
+        run: |
+          cd test
+          make clean
+
+          echo "========================================================================"
+          echo "make build TEST=ADD"
+          echo "========================================================================"
+          make build TEST=ADD
+
+          echo "========================================================================"
+          echo "make run TEST=ADD"
+          echo "========================================================================"
+          make run TEST=ADD |& tee ../test-results.add
+
+      - name: 'FPU tests: SUB'
+        run: |
+          cd test
+          make clean
+
+          echo "========================================================================"
+          echo "make build TEST=SUB"
+          echo "========================================================================"
+          make build TEST=SUB
+
+          echo "========================================================================"
+          echo "make run TEST=SUB"
+          echo "========================================================================"
+          make run TEST=SUB |& tee ../test-results.sub
+
+      - name: 'FPU tests: MUL'
+        run: |
+          cd test
+          make clean
+
+          echo "========================================================================"
+          echo "make build TEST=MUL"
+          echo "========================================================================"
+          make build TEST=MUL
+
+          echo "========================================================================"
+          echo "make run TEST=MUL"
+          echo "========================================================================"
+          make run TEST=MUL |& tee ../test-results.mul
+
+      - name: Test results
+        run: |
+          echo
+          echo "ADD-TEST RESULTS"
+          sed -n '/^Num/,/^Max/p' test-results.add; tail -1 test-results.add
+          echo "================================================================================"
+          echo "SUB-TEST RESULTS"
+          sed -n '/^Num/,/^Max/p' test-results.sub; tail -1 test-results.sub
+          echo "================================================================================"
+          echo "MUL-TEST RESULTS"
+          sed -n '/^Num/,/^Max/p' test-results.mul; tail -1 test-results.mul

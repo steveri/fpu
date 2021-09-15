@@ -86,6 +86,7 @@ jobs:
 
       - name: Test results
         run: |
+          cd test
 
           echo "========================================================================"
           echo "ADD TEST RESULTS"

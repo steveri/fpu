@@ -31,19 +31,15 @@ jobs:
       #   ${{ github.repository }} = 'steveri/fpu'
       #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
 
+      - run echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
+
       - name: Check out repository code
         uses: actions/checkout@v2
-
-      - run: |
-          echo "Job info"
-          echo "Job triggered by '${{ github.event_name }}' event."
-          echo "Job now running on a '${{ runner.os }}' server hosted by GitHub!"
-          echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
 
       - name: Install verilator
         run: sudo apt-get install verilator
 
-      - name: ADD test
+      - name: FPU tests: ADD
         run: |
           cd test
           make clean
@@ -56,9 +52,9 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=ADD"
           echo "========================================================================"
-          make run TEST=ADD
+          make run TEST=ADD |& tee test-results.add
 
-      - name: SUB test
+      - name: FPU tests: SUB
         run: |
           cd test
           make clean
@@ -71,9 +67,9 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=SUB"
           echo "========================================================================"
-          make run TEST=SUB
+          make run TEST=SUB |& tee test-results.sub
 
-      - name: MUL test
+      - name: FPU tests: MUL
         run: |
           cd test
           make clean
@@ -86,4 +82,25 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=MUL"
           echo "========================================================================"
-          make run TEST=MUL
+          make run TEST=MUL |& tee test-results.add
+
+      - name: Test results
+        run: |
+
+          echo "========================================================================"
+          echo "ADD TEST RESULTS"
+          echo ""
+          sed -n '/^Num/,$p' test-results.add
+          echo ""
+
+          echo "========================================================================"
+          echo "SUB TEST RESULTS"
+          echo ""
+          sed -n '/^Num/,$p' test-results.sub
+          echo ""
+
+          echo "========================================================================"
+          echo "MUL TEST RESULTS"
+          echo ""
+          sed -n '/^Num/,$p' test-results.mul
+          echo ""

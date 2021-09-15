@@ -1,6 +1,11 @@
 # FPU - 32-bit single-precision floating point unit
 
-[![Build Status](https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml/badge.svg)](https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml)
+| Status                 |
+|------------------------|
+| [![Build Status][1]][2]|
+
+[1]: https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml/badge.svg
+[2]: https://github.com/steveri/fpu/actions/workflows/fpu-tests.yml
 
 A simple freeware 32-bit FPU.
 So far it's just add, subtract, and multiply. It's not even close to being IEEE compliant, but I think it can add 2.0 and 2.0 okay. It's designed to be synthesizable but I've never done that (yet). For now it's just RTL that runs correctly on a simulator.

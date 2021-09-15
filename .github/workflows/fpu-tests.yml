@@ -53,7 +53,7 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=ADD"
           echo "========================================================================"
-          make run TEST=ADD |& tee test-results.add
+          make run TEST=ADD |& tee ../test-results.add
 
       - name: 'FPU tests: SUB'
         run: |
@@ -68,7 +68,7 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=SUB"
           echo "========================================================================"
-          make run TEST=SUB |& tee test-results.sub
+          make run TEST=SUB |& tee ../test-results.sub
 
       - name: 'FPU tests: MUL'
         run: |
@@ -83,11 +83,10 @@ jobs:
           echo "========================================================================"
           echo "make run TEST=MUL"
           echo "========================================================================"
-          make run TEST=MUL |& tee test-results.add
+          make run TEST=MUL |& tee ../test-results.add
 
       - name: Test results
         run: |
-          cd test
 
           echo "========================================================================"
           echo "ADD TEST RESULTS"

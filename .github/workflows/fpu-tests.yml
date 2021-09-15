@@ -31,7 +31,8 @@ jobs:
       #   ${{ github.repository }} = 'steveri/fpu'
       #   ${{ github.workspace }}  = '/home/runner/work/fpu/fpu'
 
-      - run: echo "Branch: '${{ github.ref }}' in repo '${{ github.repository }}'."
+      - run: |
+          echo "Branch '${{ github.ref }}' in repo '${{ github.repository }}'."
 
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -39,7 +40,7 @@ jobs:
       - name: Install verilator
         run: sudo apt-get install verilator
 
-      - name: FPU tests: ADD
+      - name: 'FPU tests: ADD'
         run: |
           cd test
           make clean
@@ -54,7 +55,7 @@ jobs:
           echo "========================================================================"
           make run TEST=ADD |& tee test-results.add
 
-      - name: FPU tests: SUB
+      - name: 'FPU tests: SUB'
         run: |
           cd test
           make clean
@@ -69,7 +70,7 @@ jobs:
           echo "========================================================================"
           make run TEST=SUB |& tee test-results.sub
 
-      - name: FPU tests: MUL
+      - name: 'FPU tests: MUL'
         run: |
           cd test
           make clean

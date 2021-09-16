@@ -11,7 +11,8 @@ on:
   # Schedule NOTE ONLY WORKS FOR MAIN BRANCH :(
   schedule:
     # Every morning at 3am ( min hr day JAN-DEC MON-SUN )
-    - cron: '0 3 * * *'
+    # Only runs on UTC. 3am local ~ 10am UTC :(
+    - cron: '0 10 * * *'
 
 
 ########################################################################

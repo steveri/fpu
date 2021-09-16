@@ -20,29 +20,38 @@ script:
   - set -e  ; # Die at first error
   - cd test ; # CD to test directory
 
+  # -------------------------------------------------------------------
 
-  # Add test BUILD
+  # Add-test BUILD
   - echo '$ make build TEST=ADD' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=ADD
   - echo -en 'travis_fold:end:build\\r'
 
-  # Add test RUN
+  # Add-test RUN
+  - echo '$ make run TEST=ADD' && echo -en 'travis_fold:start:build\\r'
   - make run TEST=ADD
+  - echo -en 'travis_fold:end:build\\r'
 
+  # -------------------------------------------------------------------
 
-  # Sub test BUILD
+  # Sub-test BUILD
   - echo '$ make build TEST=SUB' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=SUB
   - echo -en 'travis_fold:end:build\\r'
 
-  # Sub test RUN
+  # Sub-test RUN
+  - echo '$ make run TEST=SUB' && echo -en 'travis_fold:start:build\\r'
   - make run TEST=SUB
+  - echo -en 'travis_fold:end:build\\r'
 
+  # -------------------------------------------------------------------
 
-  # Mul test BUILD
+  # Mul-test BUILD
   - echo '$ make build TEST=MUL' && echo -en 'travis_fold:start:build\\r'
   - make clean; make build TEST=MUL
   - echo -en 'travis_fold:end:build\\r'
 
-  # Mul test RUN
+  # Mul-test RUN
+  - echo '$ make run TEST=SUB' && echo -en 'travis_fold:start:build\\r'
   - make run TEST=MUL
+  - echo -en 'travis_fold:end:build\\r'

@@ -14,7 +14,7 @@ Files include
 * addsub.v - add/sub driver
 * sradd.v - core adder, needs driver to work correctly
 * srsub.v - core subtractor, needs driver to work correctly
-* srmul.v - multiplier, works find standalone
+* srmul.v - multiplier, works fine standalone
 
 See test dir `test/` for examples of how to use the FPU.
 

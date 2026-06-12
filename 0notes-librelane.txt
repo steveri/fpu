@@ -1,0 +1,46 @@
+########################################################################
+# EXECUTIVE SUMMARY: standalone srmul 
+
+# Setup
+container=optimistic_kilby
+FPU=/nobackup/steveri/github/fpu
+docker cp $FPU/srmul.v $container:/tmp  # "Successfully copied 6.14kB"
+
+# In docker:
+cd; nix-shell ~/librelane/shell.nix  # Takes awhile the first time
+mkdir -p ~/my_designs/srmul
+cd ~/my_designs/srmul
+mv /tmp/srmul.v .
+cat << EOF > config.json
+{
+  "DESIGN_NAME": "srmul",
+  "VERILOG_FILES": ["dir::srmul.v"],
+  "CLOCK_PERIOD": 25,
+  "CLOCK_PORT": "clk"
+}
+EOF
+librelane ./config.json |& tee build.log  # Takes awhile, duh, but fun to watch
+    * LVS Passed
+    * DRC Passed
+
+
+##############################################################################
+TODO ALL FOUR verilog files, not just srmul standalone
+
+Files include
+* addsub.v - add/sub driver
+* sradd.v - core adder, needs driver to work correctly
+* srsub.v - core subtractor, needs driver to work correctly
+* srmul.v - multiplier, works fine standalone
+
+
+##############################################################################
+nix notes
+
+bind 'set enable-bracketed-paste off'
+install='nix-env -i'
+$install diffutils
+$install nano
+$install gawk
+
+For more info see ~/0notes/nix.txt

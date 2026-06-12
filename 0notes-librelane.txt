@@ -34,6 +34,22 @@ Files include
 * srmul.v - multiplier, works fine standalone
 
 
+
+librelane ./config.json >& build.log &
+tail -f build.log 
+
+%Error: Specified --top-module 'fpu' was not found in design.
+/root/my_designs/addsub/addsub.v:101: ERROR: syntax error, unexpected ';'
+
+
+
+
+
+
+
+
+
+
 ##############################################################################
 nix notes
 

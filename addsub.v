@@ -98,7 +98,7 @@ always @ (*) begin
 end
 `endif
 
-endmodule;
+endmodule
 
 
 /*
